@@ -49,6 +49,8 @@ services:
 volumes:
   postgres-data:
   uploads:
+  caddy_data:
+  caddy_config:
 
 networks:
   blognet:
