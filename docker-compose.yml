@@ -33,7 +33,7 @@ services:
     networks:
       - blognet
 
-caddy:
+  caddy:
     image: caddy:latest
     restart: unless-stopped
     ports:
