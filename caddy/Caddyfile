@@ -1,3 +1,7 @@
+www.quantumentangled.dev {
+    redir https://quantumentangled.dev{uri}
+}
+
 quantumentangled.dev {
     reverse_proxy app:8080
 }
