@@ -17,38 +17,37 @@
     </header>
     <main>
 
-    
-    <form hx-post="/upload-image" hx-trigger="change" hx-target="#upload-result" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" />
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    </form>
+        <form hx-post="/upload-image" hx-trigger="change" hx-target="#upload-result" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
 
-    <div id="upload-result"></div>
-    <form hx-post="/posts" hx-target="#message" hx-swap="innerHTML">
-        <input type="text" name="title" placeholder="Title" required><br><br>
+        <div id="upload-result"></div>
+        <form hx-post="/posts" hx-target="#message" hx-swap="innerHTML">
+            <input type="text" name="title" placeholder="Title" required><br><br>
 
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-        <textarea name="content" id="editor" rows="10" cols="80" placeholder="Write in Markdown..."
-            hx-post="/posts/preview" hx-trigger="keyup changed delay:500ms" hx-target="#preview"
-            hx-swap="innerHTML"></textarea><br><br>
+            <textarea name="content" id="editor" rows="10" cols="80" placeholder="Write in Markdown..."
+                hx-post="/posts/preview" hx-trigger="keyup changed delay:500ms" hx-target="#preview"
+                hx-swap="innerHTML"></textarea><br><br>
 
-        <button type="submit">Save Post</button>
-    </form>
+            <button type="submit">Save Post</button>
+        </form>
 
-    <div id="message"></div>
+        <div id="message"></div>
 
-    <hr>
-    <h2>Live Preview</h2>
-    <div id="preview" style="border:1px solid #ccc; padding:10px;"></div>
-
+        <hr>
+        <h2>Live Preview</h2>
+        <div id="preview" style="border:1px solid #ccc; padding:10px;"></div>
 
 
-    <form action="/logout" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <button type="submit">Logout</button>
-    </form>
-</main>
+
+        <form action="/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Logout</button>
+        </form>
+    </main>
 
     <script>
         document.body.addEventListener("htmx:afterRequest", function (event) {
