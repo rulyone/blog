@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Blog Post - Quantum Entangled</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+</head>
+
+<body>
+
+    <header class="sticky-header shadow-inset-center">
+        <h1 class="flip-2-ver-left-fwd">✏️ Edit Blog Post</h1>
+    </header>
+
+    <main class="edit-post-container">
+        <form th:action="@{/posts/{id}(id=${post.id})}"
+              method="post"
+              th:hx-put="@{/posts/{id}(id=${post.id})}" 
+              hx-target="#message" 
+              hx-swap="innerHTML">
+              
+            <input type="text" name="title" th:value="${post.title}" required><br><br>
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <textarea name="content" id="editor" rows="12" cols="80"
+                      placeholder="Update your post in Markdown..."
+                      th:text="${post.content}"
+                      hx-post="/posts/preview"
+                      hx-trigger="keyup changed delay:500ms"
+                      hx-target="#preview"
+                      hx-swap="innerHTML">
+            </textarea><br><br>
+
+            <button type="submit">Update Post</button>
+        </form>
+
+        <div id="message"></div>
+
+        <hr>
+        <h2>Live Preview</h2>
+        <div id="preview" style="border:1px solid #ccc; padding:10px;"></div>
+
+        <hr>
+        <form action="/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Logout</button>
+        </form>
+    </main>
+
+    <script th:src="@{/js/scripts.js}"></script>
+
+    <script>
+        document.body.addEventListener("htmx:afterRequest", function (event) {
+            if (event.detail.target.id === "upload-result") {
+                const url = event.detail.xhr.responseText;
+                const textarea = document.querySelector("textarea[name='content']");
+                if (!textarea) return;
+
+                const cursorPos = textarea.selectionStart;
+                const textBefore = textarea.value.substring(0, cursorPos);
+                const textAfter = textarea.value.substring(cursorPos);
+                textarea.value = `${textBefore}<img class="resp-images" src="${url}" width="" height="">${textAfter}`;
+
+                const newCursorPos = cursorPos + `<img class="resp-images" src="${url}" width="" height="">`.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            }
+        });
+    </script>
+
+</body>
+</html>
