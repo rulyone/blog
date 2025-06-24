@@ -12,6 +12,7 @@
 
 ## Prerequisites
 - Docker and docker compose installed
+- SDKMAN (sdk install java && sdk install gradle)
 
 ## Run
 - Rename example.env file to .env and add your own configuration

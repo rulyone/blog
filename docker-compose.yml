@@ -18,7 +18,7 @@ services:
     depends_on:
       - db
     ports:
-      - "80:8080"
+      - "8080:8080"
     environment:
       - BLOG_UPLOAD-DIR
       - SPRING_DATASOURCE_URL
@@ -30,6 +30,19 @@ services:
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT-SECRET
     volumes:
       - uploads:/srv/images/
+    networks:
+      - blognet
+
+caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - blognet
 
