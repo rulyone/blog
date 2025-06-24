@@ -40,6 +40,8 @@ public class WebController {
         // Convert Markdown to HTML for each post
         List<Map<String, Object>> renderedPosts = posts.stream().map(post -> {
             Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("slug", post.getSlug());
             map.put("title", post.getTitle());
             map.put("htmlContent", markdownService.renderToHtml(post.getContent()));
             map.put("createdAt", post.getCreatedAt());
@@ -48,6 +50,24 @@ public class WebController {
 
         model.addAttribute("posts", renderedPosts);
         return "blog";
+    }
+
+    @GetMapping("/viewpost/{id}/{slug}")
+    public String viewPost(@PathVariable Long id,
+                        @PathVariable String slug,
+                        Model model) {
+        BlogPost post = postRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        // Optional: redirect to canonical slug if changed
+        if (!slug.equals(post.getSlug())) {
+            return "redirect:/posts/" + post.getId() + "/" + post.getSlug();
+        }
+
+        String htmlContent = markdownService.renderToHtml(post.getContent());
+        model.addAttribute("post", post);
+        model.addAttribute("htmlContent", htmlContent);
+        return "viewpost"; // -> viewpost.html
     }
 
     @PreAuthorize("hasRole('AUTHOR')")
@@ -71,6 +91,7 @@ public class WebController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
 
         post.setTitle(title);
+        post.setSlugFromTitle(title);
         post.setContent(content);
         postRepository.save(post);
 

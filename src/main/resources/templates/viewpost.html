@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+    <header class="sticky-header shadow-inset-center">
+        <h1><a href="/" style="text-decoration: none;">📝 Quantum Entangled</a></h1>
+    </header>
+
+    <article class="shadow-inset-center">
+        <h2 th:text="${post.title}">Title</h2>
+        <div class="date local-date" th:attr="data-time=${post.createdAt}"></div>
+        <div class="content" th:utext="${htmlContent}">Post content</div>
+    </article>
+
+    <script th:src="@{/js/scripts.js}"></script>
+</body>
+</html>
