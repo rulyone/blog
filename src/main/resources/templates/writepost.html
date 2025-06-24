@@ -2,14 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Write Blog Post</title>
+    <title>Write Blog Post - Quantum Entangled</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 
 <body>
 
-    <h1>New Blog Post</h1>
+    <header class="sticky-header shadow-inset-center">
+        <h1 class="flip-2-ver-left-fwd">📝 Quantum Entangled</h1>
+    </header>
+    <main>
 
+    
     <form hx-post="/upload-image" hx-trigger="change" hx-target="#upload-result" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*" />
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
@@ -40,7 +48,7 @@
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">Logout</button>
     </form>
-
+</main>
 
     <script>
         document.body.addEventListener("htmx:afterRequest", function (event) {
