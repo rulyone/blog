@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+      lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quantum Entangled</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
+</head>
+
+<body>
+    <header class="sticky-header shadow-inset-center">
+        <h1 class="flip-2-ver-left-fwd">📝 Quantum Entangled</h1>
+    </header>
+
+    <div th:each="post : ${posts}">
+        <article class="shadow-inset-center">
+            <h2 th:text="${post.title}">Title</h2>
+            <div class="date local-date" 
+                 th:attr="data-time=${post.createdAt}"></div>
+            <div class="content" th:utext="${post.htmlContent}">Markdown rendered content</div>
+        </article>
+    </div>
+
+    <!-- Show login if not authenticated -->
+    <div sec:authorize="!isAuthenticated()">
+        <a href="/oauth2/authorization/github">
+            <button>
+                <img src="/img/github-mark.svg" alt="" style="height: 20px; margin-right: 8px;">
+                <span>Login with GitHub</span>
+              </button>
+        </a>
+    </div>
+
+    <!-- Show greeting if user is authenticated -->
+    <div sec:authorize="isAuthenticated()">
+        <p>Welcome, <span sec:authentication="name">User</span>!</p>
+        <p>There's not much you can do for now while logged in other than help me test the functionality, and for that thank you very much!</p>
+        <p>You can also test the logout, which will obviously send you to an infinite loop.</p>
+        <form th:action="@{/logout}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+
+    <script th:src="@{/js/scripts.js}"></script>
+</body>
+
+</html>
