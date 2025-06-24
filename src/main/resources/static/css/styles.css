@@ -1,0 +1,74 @@
+:root {
+    --max-width: 700px;
+    --padding: 1rem;
+    --font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0 auto;
+    padding: var(--padding);
+    max-width: var(--max-width);
+    background-color: #f9f9f9;
+    color: #222;
+}
+
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+article {
+    background: white;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    margin-bottom: 0.3rem;
+    font-size: 1.5rem;
+}
+
+.date {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 1rem;
+}
+
+.content {
+    line-height: 1.6;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+    body {
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    /* Or match your theme */
+    z-index: 1000;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resp-images {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}

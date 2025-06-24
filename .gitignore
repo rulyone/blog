@@ -1,0 +1,55 @@
+# Gradle
+.gradle/
+build/
+bin/
+.project
+.classpath
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.metadata/
+.apt_generated/
+.factorypath
+.sts4-cache/
+
+# VS Code
+.vscode/
+
+# Maven (if also used)
+target/
+
+# Docker
+!Dockerfile
+.dockerignore
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+log/
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.zip
+*.tar.gz
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
