@@ -61,7 +61,7 @@ public class WebController {
 
         // Optional: redirect to canonical slug if changed
         if (!slug.equals(post.getSlug())) {
-            return "redirect:/posts/" + post.getId() + "/" + post.getSlug();
+            return "redirect:/viewpost/" + post.getId() + "/" + post.getSlug();
         }
 
         String htmlContent = markdownService.renderToHtml(post.getContent());
