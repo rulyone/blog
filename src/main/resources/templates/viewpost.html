@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${post.title}">Post</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/animations.css}" />
 </head>
 <body>
     <header class="sticky-header shadow-inset-center">
         <h1><a href="/" style="text-decoration: none;">📝 Quantum Entangled</a></h1>
     </header>
 
-    <article class="shadow-inset-center">
-        <h2 th:text="${post.title}">Title</h2>
-        <div class="date local-date" th:attr="data-time=${post.createdAt}"></div>
-        <div class="content" th:utext="${htmlContent}">Post content</div>
-    </article>
+    <div class="container">
+        <article class="shadow-inset-center">
+            <h2 th:text="${post.title}">Title</h2>
+            <div class="date local-date" th:attr="data-time=${post.createdAt}"></div>
+            <div class="content" th:utext="${htmlContent}">Post content</div>
+        </article>
+    </div>
 
     <script th:src="@{/js/scripts.js}"></script>
 </body>
