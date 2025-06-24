@@ -15,6 +15,8 @@ public class BlogPost {
 
     private String title;
 
+    private String slug;
+
     @Lob
     private String content;
 
@@ -34,6 +36,17 @@ public class BlogPost {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getSlug() {
+        return this.slug;
+    }
+
+    public void setSlugFromTitle(String title) {
+        String rawSlug = title.toLowerCase()
+                         .replaceAll("[^a-z0-9\\s]", "")
+                         .replaceAll("\\s+", "-");
+        this.slug = rawSlug.length() > 64 ? rawSlug.substring(0, 64) : rawSlug;
     }
 
     public String getContent() {

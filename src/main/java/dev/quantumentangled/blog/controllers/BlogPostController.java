@@ -28,6 +28,7 @@ public class BlogPostController {
     public ResponseEntity<?> savePost(@RequestParam String title, @RequestParam String content) {
         BlogPost post = new BlogPost();
         post.setTitle(title);
+        post.setSlugFromTitle(title);
         post.setContent(content);
         repo.save(post);
         return ResponseEntity.ok("Saved");

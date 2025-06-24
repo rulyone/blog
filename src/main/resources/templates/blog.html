@@ -19,7 +19,9 @@
 
     <div th:each="post : ${posts}">
         <article class="shadow-inset-center">
-            <h2 th:text="${post.title}">Title</h2>
+            <a th:href="@{/viewpost/{id}/{slug}(id=${post.id}, slug=${post.slug})}" class="title-link">
+                <h2 th:text="${post.title}">Title</h2>
+            </a>            
             <div class="date local-date" 
                  th:attr="data-time=${post.createdAt}"></div>
             <div class="content" th:utext="${post.htmlContent}">Markdown rendered content</div>
