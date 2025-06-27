@@ -8,6 +8,9 @@ import java.util.Map;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,24 +20,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import dev.quantumentangled.blog.entities.BlogComment;
 import dev.quantumentangled.blog.entities.BlogPost;
+import dev.quantumentangled.blog.repositories.BlogCommentRepository;
 import dev.quantumentangled.blog.repositories.BlogPostRepository;
 import dev.quantumentangled.blog.services.MarkdownService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
 public class WebController {
 
     private final BlogPostRepository postRepository;
+    private final BlogCommentRepository commentRepository;
     private final MarkdownService markdownService;
 
-    public WebController(BlogPostRepository postRepository, MarkdownService markdownService) {
+    private final RequestCache requestCache = new HttpSessionRequestCache();
+
+    public WebController(BlogPostRepository postRepository, BlogCommentRepository commentRepository, MarkdownService markdownService) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.markdownService = markdownService;
     }
 
     @GetMapping("/")
-    public String blogPage(Model model) {
+    public String blogPage(HttpServletRequest request, HttpServletResponse response, 
+                            Authentication authentication, Model model) {
+
         List<BlogPost> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
 
         // Convert Markdown to HTML for each post
@@ -49,15 +62,23 @@ public class WebController {
         }).toList();
 
         model.addAttribute("posts", renderedPosts);
+
+        if (authentication == null) {
+            requestCache.saveRequest(request, response);
+        }
         return "blog";
     }
 
     @GetMapping("/viewpost/{id}/{slug}")
-    public String viewPost(@PathVariable Long id,
+    public String viewPost(HttpServletRequest request, HttpServletResponse response, 
+                        Authentication authentication,
+                        @PathVariable Long id,
                         @PathVariable String slug,
                         Model model) {
         BlogPost post = postRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        List<BlogComment> comments = commentRepository.findByPostIdOrderByCreatedAtAsc(post.getId());
 
         // Optional: redirect to canonical slug if changed
         if (!slug.equals(post.getSlug())) {
@@ -67,6 +88,11 @@ public class WebController {
         String htmlContent = markdownService.renderToHtml(post.getContent());
         model.addAttribute("post", post);
         model.addAttribute("htmlContent", htmlContent);
+        model.addAttribute("comments", comments);
+
+        if (authentication == null) {
+            requestCache.saveRequest(request, response);
+        }
         return "viewpost"; // -> viewpost.html
     }
 

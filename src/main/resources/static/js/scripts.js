@@ -10,3 +10,10 @@ document.querySelectorAll('.local-date').forEach(el => {
     });
     el.textContent = formatted;
   });
+
+document.body.addEventListener('htmx:afterRequest', function (evt) {
+  const form = evt.detail.elt;
+  if (form && form.matches('form.comment-form')) {
+    form.reset();
+  }
+});
