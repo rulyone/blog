@@ -1,10 +1,10 @@
 <!-- fragments/comments.html -->
- <div id="comments-list" th:fragment="commentList">
+<div id="comments-list" th:fragment="commentList">
     <div th:if="${comments != null}"></div>
-        <div th:each="comment : ${comments}" class="comment-entry">
-            <p><strong th:text="${comment.author.username}">Author</strong> said:</p>
-            <p th:text="${comment.content}">Comment content</p>
-            <hr>
-        </div>
+    <div th:each="comment : ${comments}" class="border-b border-gray-200 pb-4 mb-4 last:border-b-0">
+        <p class="font-semibold text-slate-700 mb-2">
+            <strong th:text="${comment.author.username}">Author</strong> said:
+        </p>
+        <p th:text="${comment.content}" class="text-gray-700 leading-relaxed">Comment content</p>
     </div>
 </div>

@@ -37,11 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             newUser.setUsername(username);
             newUser.setEmail(email);
             newUser.setFullName(name);
-            if(username.equals("rulyone")) {
-                newUser.setRole("ROLE_AUTHOR");
-            }else{
-                newUser.setRole("ROLE_USER");
-            }
+            newUser.setRole("ROLE_USER");
             return userRepository.save(newUser);
         });
 

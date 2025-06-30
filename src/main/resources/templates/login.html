@@ -2,15 +2,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <title>Login - Quantum Entangled</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <h1>Login</h1>
+<body class="font-sans bg-gray-50 text-gray-900 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full mx-4">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-800 mb-2">📝 Quantum Entangled</h1>
+            <p class="text-gray-600">Please sign in to continue</p>
+        </div>
 
-    <a href="/oauth2/authorization/github">
-        <button type="button">Login with GitHub</button>
-    </a>
+        <a href="/oauth2/authorization/github"
+            class="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors font-semibold">
+            <img th:src="@{/img/github-mark-white.svg}" alt="" class="w-5 h-5 mr-3">
+            Login with GitHub
+        </a>
+
+    </div>
 </body>
 
 </html>
