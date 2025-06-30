@@ -48,11 +48,6 @@
     </div>
 
     <div sec:authorize="isAuthenticated()" class="bg-white p-5 rounded-lg shadow-sm mb-6">
-        <p class="mb-3">Welcome, <span sec:authentication="name" class="font-semibold">User</span>!</p>
-        <p class="mb-3 text-gray-600">There's not much you can do for now while logged in other than help me test the
-            functionality, and for that thank you very much!</p>
-        <p class="mb-4 text-gray-600">You can also test the logout, which will obviously send you to an infinite loop.
-        </p>
         <form th:action="@{/logout}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <button type="submit"
