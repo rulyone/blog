@@ -1,0 +1,9 @@
+/* for inline code blocks */
+code:not([class*="language-"]):not(pre code) {
+    background-color: #f1f3f4;
+    color: #d73a49;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+}
