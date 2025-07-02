@@ -1,6 +1,5 @@
 package dev.quantumentangled.blog.controllers;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +92,7 @@ public class WebController {
         if (authentication == null) {
             requestCache.saveRequest(request, response);
         }
-        return "viewpost"; // -> viewpost.html
+        return "viewpost"; 
     }
 
     @PreAuthorize("hasRole('AUTHOR')")
@@ -132,7 +131,7 @@ public class WebController {
 
     @GetMapping("/login")
     public String login() {
-        return "login"; // This maps to resources/templates/login.html
+        return "login"; 
     }
     
 }

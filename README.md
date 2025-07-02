@@ -10,10 +10,10 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
 ## Features
 
 - 📝 Markdown blog posts with syntax highlighting
-- 🔐 GitHub OAuth2 authentication  
-- 💬 Real-time commenting
+- 🔐 OAuth2 authentication (GitHub, Google, Microsoft)
+- 💬 Comments in blog posts
 - 🎨 Responsive Tailwind UI
-- 🖼️ Image uploads
+- 🖼️ Image uploads for writers
 
 ## Tech Stack
 
@@ -26,7 +26,8 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
 1. **Setup environment**
    ```bash
    cp example.env .env
-   # Add GitHub OAuth credentials to .env
+   # Add GitHub/Microsoft/Google OAuth credentials to .env
+   # see Configuration OAuth2/OIDC
    ```
 
 2. **Run**
@@ -40,12 +41,35 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
    - Write posts: http://localhost:8080/writepost (requires AUTHOR role)
    - Edit posts: https://localhost:8080/posts/{post_id}/edit (requires AUTHOR role)
 
-## Configuration
+## Configuration OAuth2/OIDC
 
-### GitHub OAuth
-1. Create OAuth App: https://github.com/settings/applications/new
+### GitHub
+1. Create OAuth App: `https://github.com/settings/applications/new`
 2. Callback URL: `http://localhost:8080/login/oauth2/code/github`
-3. Add credentials to `.env`
+3. Add credentials to `.env` (copy client id and client secret)
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT-ID
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT-SECRET
+
+### Google
+
+1. Create OAuth Client: Go to `https://console.cloud.google.com/apis/credentials`
+2. Create credentials > OAuth client ID
+3. Application type: Web application
+4. Authorized redirect URI: `http://localhost:8080/login/oauth2/code/google`
+5. Add credentials to `.env` (copy client id and client secret)
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT-ID
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT-SECRET
+
+### Microsoft
+
+1. Create App Registration. Go to https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade
+2. New registration (with a meaningful name)
+3. Supported account types: Personal Microsoft accounts only
+3. Redirect URI: `http://localhost:8080/login/oauth2/code/microsoft` (type/platform: Web)
+4. Create client secret: Certificates & secrets → New client secret
+5. Add credentials to `.env` (copy Application/client id and Secret Value)
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MICROSOFT_CLIENT-ID
+    - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MICROSOFT_CLIENT-SECRET
 
 ### User Roles
 Grant AUTHOR role in database after first login with GitHub:

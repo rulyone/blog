@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <form th:fragment="profile-form" th:object="${userForm}" hx-post="/complete-profile" hx-target="#form-container"
+        hx-swap="innerHTML">
+
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" th:field="*{username}"
+                th:class="${#fields.hasErrors('username')} ? 'form-control error' : 'form-control'"
+                placeholder="Enter your username">
+
+            <div th:if="${#fields.hasErrors('username')}" class="error-message">
+                <span th:each="error : ${#fields.errors('username')}" th:text="${error}"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Complete Profile</button>
+    </form>
+</body>
+
+</html>
