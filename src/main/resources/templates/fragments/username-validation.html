@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <div th:fragment="username-validation" id="username-validation">
+        <ul th:if="${errors != null and !errors.empty}" class="mt-2 list-disc list-inside space-y-1">
+            <li th:each="error : ${errors}" class="text-sm text-red-600" th:text="${error}"></li>
+        </ul>
+    </div>
+</body>
+
+</html>

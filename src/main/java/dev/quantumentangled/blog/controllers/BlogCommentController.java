@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import dev.quantumentangled.blog.entities.BlogComment;
 import dev.quantumentangled.blog.entities.BlogPost;
@@ -42,9 +40,9 @@ public class BlogCommentController {
             @AuthenticationPrincipal OAuth2User oauth2User,
             Model model) {
 
-        String githubId = oauth2User.getAttribute("login");
+        Long userId = (Long) oauth2User.getAttribute("user_id");
         BlogPost post = postRepo.findById(id).orElseThrow();
-        User user = userRepo.findByUsername(githubId).orElseThrow();
+        User user = userRepo.findById(userId).orElseThrow();
 
         BlogComment comment = new BlogComment();
         comment.setContent(content);

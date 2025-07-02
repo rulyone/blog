@@ -47,19 +47,17 @@
                     class="px-4 py-2 bg-slate-800 text-white rounded-md hover:bg-slate-900 transition-colors">Submit
                     Comment</button>
             </form>
-        </div>
+        </div>       
 
-        <!-- Authentication section -->
-        <div sec:authorize="!isAuthenticated()" class="bg-white p-5 rounded-lg shadow-sm mb-6">
-            <a th:href="@{/oauth2/authorization/github}"
-                class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">
-                <img th:src="@{/img/github-mark-white.svg}" alt="" class="h-5 w-5 mr-2">
-                <span>Login with GitHub</span>
-            </a>
-        </div>
     </section>
 
+    <!-- Authentication section -->
+    <div th:replace="~{fragments/auth-modal :: oauth-login-button}"></div>
+    <div th:replace="~{fragments/auth-modal :: oauth-login-modal}"></div>
+    <div th:replace="~{fragments/auth-modal :: oauth-logout}"></div> 
+
     <script th:src="@{/js/scripts.js}"></script>
+    <script th:replace="~{fragments/auth-modal :: oauth-modal-scripts}"></script>
 </body>
 
 </html>

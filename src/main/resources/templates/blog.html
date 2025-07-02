@@ -37,25 +37,12 @@
             <div class="leading-relaxed content" th:utext="${post.htmlContent}">Markdown rendered content</div>
         </article>
     </div>
-
-    <!-- Authentication section -->
-    <div sec:authorize="!isAuthenticated()" class="bg-white p-5 rounded-lg shadow-sm mb-6">
-        <a th:href="@{/oauth2/authorization/github}"
-            class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">
-            <img th:src="@{/img/github-mark-white.svg}" alt="" class="h-5 w-5 mr-2">
-            <span>Login with GitHub</span>
-        </a>
-    </div>
-
-    <div sec:authorize="isAuthenticated()" class="bg-white p-5 rounded-lg shadow-sm mb-6">
-        <form th:action="@{/logout}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit"
-                class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors">Logout</button>
-        </form>
-    </div>
-
+    <div th:replace="~{fragments/auth-modal :: oauth-login-button}"></div>
+    <div th:replace="~{fragments/auth-modal :: oauth-login-modal}"></div>
+    <div th:replace="~{fragments/auth-modal :: oauth-logout}"></div>
+    
     <script th:src="@{/js/scripts.js}"></script>
+    <script th:replace="~{fragments/auth-modal :: oauth-modal-scripts}"></script>
 </body>
 
 </html>
