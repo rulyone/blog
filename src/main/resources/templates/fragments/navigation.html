@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Desktop Sidebar Navigation Fragment -->
+<aside th:fragment="sidebar-navigation" class="hidden md:block w-64 fixed left-0 top-0 h-full bg-white shadow-lg z-40 overflow-y-auto">
+    <div class="p-6">
+        <h2 class="motion-safe:animate-[pulse_2s] text-2xl font-bold text-slate-800 mb-8">📝 Quantum Entangled</h2>
+        
+        <nav class="flex flex-col space-y-3">
+            <a th:href="@{/}" class="text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition-all duration-200">
+                <img th:src="@{/img/outline_blog.svg}" class="inline-block w-6 h-6"  />
+                <span class="inline-block w-6">Blog</span> 
+            </a>
+            <a th:href="@{/portfolio}" class="text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition-all duration-200">
+                <img th:src="@{/img/outline_portfolio.svg}" class="inline-block w-6 h-6"  />
+                <span class="inline-block w-6">Portfolio</span> 
+            </a>
+            <a th:href="@{/contact}" class="text-gray-700 hover:text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition-all duration-200">
+                <img th:src="@{/img/outline_contact.svg}" class="inline-block w-6 h-6"  />
+                <span class="inline-block w-6">Contact</span> 
+            </a>
+        </nav>
+        
+        <!-- Authentication Section -->
+        <div class="mt-8 pt-8 border-t border-gray-200">
+            <div th:replace="~{fragments/auth-modal :: oauth-login-menu}"></div>
+            <div th:replace="~{fragments/auth-modal :: oauth-logout}"></div>
+        </div>
+    </div>
+</aside>
+
+
+<!-- Mobile Header with Hamburger Fragment -->
+<div th:fragment="mobile-header">
+    <div class="flex items-center justify-between">
+        <h1 class="motion-safe:animate-[pulse_2s] text-3xl font-bold text-slate-800 hover:text-blue-600 transition-colors duration-300">
+            📝 Quantum Entangled
+        </h1>
+        <button 
+            id="hamburger-btn"
+            class="relative w-10 h-10 flex flex-col justify-center items-center md:hidden focus:outline-none"
+            onclick="toggleMenu()"
+        >
+            <span class="hamburger-line transform transition-all duration-300 ease-in-out"></span>
+            <span class="hamburger-line transform transition-all duration-300 ease-in-out"></span>
+            <span class="hamburger-line transform transition-all duration-300 ease-in-out"></span>
+        </button>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay Fragment -->
+<div th:fragment="mobile-menu">
+    <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden md:hidden">
+        <div class="fixed right-0 top-0 h-full w-64 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out" id="menu-panel">
+            <div class="p-6">
+                <button 
+                    class="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+                    onclick="toggleMenu()"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <nav class="mt-8 flex flex-col space-y-4">
+                    <a th:href="@{/}" class="text-lg text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2 border-b border-gray-200">
+                        <img th:src="@{/img/outline_blog.svg}" class="inline-block w-6 h-6"  />
+                        <span class="inline-block w-6">Blog</span> 
+                    </a>
+                    <a th:href="@{/portfolio}" class="text-lg text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2 border-b border-gray-200">
+                        <img th:src="@{/img/outline_portfolio.svg}" class="inline-block w-6 h-6"  />
+                        <span class="inline-block w-6">Portfolio</span> 
+                    </a>
+                    <a th:href="@{/contact}" class="text-lg text-gray-700 hover:text-blue-600 transition-colors duration-200 py-2 border-b border-gray-200">
+                        <img th:src="@{/img/outline_contact.svg}" class="inline-block w-6 h-6"  />
+                        <span class="inline-block w-6">Contact</span> 
+                    </a>
+                    
+                    <!-- Authentication Links -->
+                    <div class="mt-6 pt-6 border-gray-200">
+                        <div th:replace="~{fragments/auth-modal :: oauth-login-menu}"></div>
+                        
+                        <div th:replace="~{fragments/auth-modal :: oauth-logout}"></div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation Styles Fragment -->
+<style th:fragment="nav-styles">
+    .hamburger-line {
+        width: 30px;
+        height: 3px;
+        background-color: #374151;
+        margin: 3px 0;
+        transition: 0.3s;
+    }
+    
+    .hamburger-active .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .hamburger-active .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .hamburger-active .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    .menu-open {
+        transform: translateX(0) !important;
+    }
+    
+    /* Offset main content for desktop sidebar */
+    @media (min-width: 768px) {
+        .main-content-with-sidebar {
+            margin-left: 16rem; /* Same as w-64 */
+        }
+    }
+    
+    /* Better typography for content */
+    .content {
+        font-size: 1.125rem;
+        line-height: 1.75;
+    }
+    
+    .content p {
+        margin-bottom: 1.25rem;
+    }
+    
+    .content h1, .content h2, .content h3, .content h4 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<!-- Navigation Scripts Fragment -->
+<script th:fragment="nav-scripts">
+    function toggleMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuPanel = document.getElementById('menu-panel');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        
+        if (mobileMenu.classList.contains('hidden')) {
+            // Open menu
+            mobileMenu.classList.remove('hidden');
+            mobileMenu.offsetHeight;
+            setTimeout(() => {
+                menuPanel.classList.add('menu-open');
+                hamburgerBtn.classList.add('hamburger-active');
+            }, 10);
+            
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = 'hidden';
+        } else {
+            // Close menu
+            menuPanel.classList.remove('menu-open');
+            hamburgerBtn.classList.remove('hamburger-active');
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+            }, 300);
+            
+            // Re-enable body scroll
+            document.body.style.overflow = '';
+        }
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuPanel = document.getElementById('menu-panel');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        
+        // Check if menu is open and click is on the overlay (not the menu panel or hamburger button)
+        if (!mobileMenu.classList.contains('hidden')) {
+            // If click is on the overlay background (mobile-menu) but not on the menu panel or its children
+            if (event.target === mobileMenu || 
+                (mobileMenu.contains(event.target) && !menuPanel.contains(event.target))) {
+                toggleMenu();
+            }
+        }
+
+    });
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) {
+                toggleMenu();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
