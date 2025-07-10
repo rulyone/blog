@@ -134,4 +134,14 @@ public class WebController {
         return "login"; 
     }
     
+    @GetMapping("/portfolio")
+    public String portfolio() {
+        return "portfolio";
+    }
+
+    @GetMapping("/contact")
+    public String contact() {
+        return "contact";
+    }
+    
 }
