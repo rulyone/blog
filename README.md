@@ -40,6 +40,9 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
    - Blog: http://localhost:8080
    - Write posts: http://localhost:8080/writepost (requires AUTHOR role)
    - Edit posts: https://localhost:8080/posts/{post_id}/edit (requires AUTHOR role)
+   - Umami analytics: http://localhost:3000 
+    - (if hosted, you should use a SSH tunel, eg: ssh -L 3000:umami:3000 your-user@youserver.com)
+    - Recommended to change default admin password too, even though it's only accessed through a SSH tunel
 
 ## Configuration OAuth2/OIDC
 

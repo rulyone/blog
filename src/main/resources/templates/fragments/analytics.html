@@ -1,0 +1,21 @@
+<!-- fragments/analytics.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Umami Analytics Fragment -->
+    <div th:fragment="umami-analytics">
+        <script 
+            th:if="${umamiEnabled}" 
+            async 
+            th:src="${umamiScriptUrl}"
+            th:attr="data-website-id=${umamiWebsiteId}">
+        </script>
+    </div>
+</head>
+</html>
+
+<!-- Usage in your main template -->
+<!--
+Include this in your main layout template's <head> section:
+<div th:replace="fragments/analytics :: umami-analytics"></div>
+-->

@@ -35,6 +35,10 @@ services:
       - SPRING_THYMELEAF_CACHE
       - SPRING_WEB_RESOURCES_CACHE_PERIOD
       - SPRING_DEVTOOLS_RESTART_ENABLED
+      - UMAMI_ENABLED
+      - UMAMI_SCRIPT-URL
+      - UMAMI_WEBSITE-ID
+
     volumes:
       - uploads:/srv/images/
       - ./src/main/resources/templates:/app/src/main/resources/templates
@@ -55,8 +59,36 @@ services:
     networks:
       - blognet
 
+  umami-db:
+    image: postgres:17
+    restart: always
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - umami-postgres-data:/var/lib/postgresql/data
+    networks:
+      - blognet
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    restart: always
+    depends_on:
+      - umami-db
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET}
+      HOSTNAME: ${UMAMI_HOSTNAME}
+    networks:
+      - blognet
+    ports:
+      - "3000:3000"
+
 volumes:
   postgres-data:
+  umami-postgres-data:
   uploads:
   caddy_data:
   caddy_config:
