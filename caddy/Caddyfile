@@ -5,3 +5,15 @@ www.quantumentangled.dev {
 quantumentangled.dev {
     reverse_proxy app:8080
 }
+
+analytics.quantumentangled.dev {
+    handle /script.js {
+        reverse_proxy umami:3000
+    }
+    handle /api/send {
+        reverse_proxy umami:3000  
+    }
+    handle {
+        respond "Not Found" 404
+    }
+}
