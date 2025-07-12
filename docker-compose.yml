@@ -38,7 +38,12 @@ services:
       - UMAMI_ENABLED
       - UMAMI_SCRIPT-URL
       - UMAMI_WEBSITE-ID
-
+      - SPRING_MAIL_HOST
+      - SPRING_MAIL_PORT
+      - SPRING_MAIL_USERNAME
+      - SPRING_MAIL_PASSWORD
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE
     volumes:
       - uploads:/srv/images/
       - ./src/main/resources/templates:/app/src/main/resources/templates

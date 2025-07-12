@@ -14,12 +14,14 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
 - 💬 Comments in blog posts
 - 🎨 Responsive Tailwind UI
 - 🖼️ Image uploads for writers
+- 📩 Contact Form with automatic Email to Blog owner (rate limited to prevent abusers)
 
 ## Tech Stack
 
 - **Backend**: Spring Boot 3, Spring Security 6, PostgreSQL 17
 - **Frontend**: Thymeleaf, HTMX, Tailwind CSS, Prism.js
 - **Infrastructure**: Docker Compose, Caddy reverse proxy
+- **Utilities**: Bucket4j, Commonmark, Flyway
 
 ## Quick Start
 
@@ -28,6 +30,7 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
    cp example.env .env
    # Add GitHub/Microsoft/Google OAuth credentials to .env
    # see Configuration OAuth2/OIDC
+   # see Configuration SMTP (Mail)
    ```
 
 2. **Run**
@@ -37,12 +40,12 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
    ```
 
 3. **Access**
-   - Blog: http://localhost:8080
-   - Write posts: http://localhost:8080/writepost (requires AUTHOR role)
-   - Edit posts: https://localhost:8080/posts/{post_id}/edit (requires AUTHOR role)
-   - Umami analytics: http://localhost:3000 
-    - (if hosted, you should use a SSH tunel, eg: ssh -L 3000:localhost:3000 your-user@youserver.com)
-    - Recommended to change default admin password too, even though it's only accessed through a SSH tunel
+    - Blog: http://localhost:8080
+    - Write posts: http://localhost:8080/writepost (requires AUTHOR role)
+    - Edit posts: https://localhost:8080/posts/{post_id}/edit (requires AUTHOR role)
+    - Umami analytics: http://localhost:3000 
+        - (if hosted, you should use a SSH tunel, eg: ssh -L 3000:localhost:3000 your-user@youserver.com)
+        - Recommended to change default admin password too, even though it's only accessed through a SSH tunel
 
 ## Configuration OAuth2/OIDC
 
@@ -73,6 +76,11 @@ Full-stack blog with Spring Boot, HTMX, and Tailwind CSS.
 5. Add credentials to `.env` (copy Application/client id and Secret Value)
     - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MICROSOFT_CLIENT-ID
     - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_MICROSOFT_CLIENT-SECRET
+
+## Configuration SMTP (Mail)
+
+- If you have custom domain for your mail, make sure it's properly configured with MX records, SPF, DKIM and DMARC to prevent being marked as Spam.
+- `example.env` has some configurations that you need to fetch from your mail provider (SMTP), remember to configure your `.env` configuration file.
 
 ### User Roles
 Grant AUTHOR role in database after first login with GitHub:

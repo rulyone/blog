@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import dev.quantumentangled.blog.controllers.validation.UserProfileForm;
+import dev.quantumentangled.blog.controllers.forms.UserProfileForm;
 import dev.quantumentangled.blog.entities.User;
 import dev.quantumentangled.blog.exceptions.UsernameAlreadyExistsException;
 import dev.quantumentangled.blog.services.UserService;
