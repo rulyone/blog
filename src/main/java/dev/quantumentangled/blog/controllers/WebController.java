@@ -138,10 +138,5 @@ public class WebController {
     public String portfolio() {
         return "portfolio";
     }
-
-    @GetMapping("/contact")
-    public String contact() {
-        return "contact";
-    }
     
 }

@@ -1,4 +1,4 @@
-package dev.quantumentangled.blog.controllers.validation;
+package dev.quantumentangled.blog.controllers.forms;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
