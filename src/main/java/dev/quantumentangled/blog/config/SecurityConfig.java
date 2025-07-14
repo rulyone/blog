@@ -45,7 +45,8 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/static/**", "/login", "/logout", 
-                    "/viewpost/**", "/portfolio",
+                    "/viewpost/**", "/portfolio", 
+                    "/spatialindex",
                     "/uploads/**", "/css/**", "/img/**", "/js/**").permitAll()
                 .requestMatchers("/writepost", "/posts/*/edit").hasRole("AUTHOR")
                 .anyRequest().authenticated()                

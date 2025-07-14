@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Index Visualization</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #60a5fa;
+            margin-bottom: 10px;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+        }
+        
+        .description {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-size: clamp(0.875rem, 2vw, 1.125rem);
+            padding: 0 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 120px;
+        }
+        
+        .control-group label {
+            font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+            color: #cbd5e1;
+        }
+        
+        button {
+            background: #3730a3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: clamp(0.875rem, 1.5vw, 1rem);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            min-width: 100px;
+            max-width: 150px;
+        }
+        
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 4/3;
+        }
+        
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #1e293b;
+            border-radius: 8px;
+            cursor: crosshair;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        
+        .stat-card {
+            background: #1e293b;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            color: #60a5fa;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            font-weight: bold;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            border: 1px solid #334155;
+            max-width: 200px;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 5px;
+            }
+            
+            .controls {
+                gap: 10px;
+            }
+            
+            button {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .control-group {
+                min-width: 100px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .legend {
+                gap: 15px;
+            }
+            
+            .legend-item {
+                font-size: 0.75rem;
+            }
+            
+            .legend-color {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        
+        /* Touch-friendly adjustments */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                padding: 10px 20px;
+            }
+            
+            input[type="range"] {
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spatial Index Visualization</h1>
+        <p class="description">Click to add entities • Hover (or Tap on phones) to see search radius • Watch how the grid efficiently queries nearby objects</p>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #22c55e;"></div>
+                <span>Entities</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(59, 130, 246, 0.3);"></div>
+                <span>Checked Cells</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgba(239, 68, 68, 0.8);"></div>
+                <span>Found Entities</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="cellSize">Cell Size: <span id="cellSizeValue">50</span>px</label>
+                <input type="range" id="cellSize" min="25" max="100" value="50" step="25">
+            </div>
+            <div class="control-group">
+                <label for="searchRadius">Search Radius: <span id="searchRadiusValue">75</span>px</label>
+                <input type="range" id="searchRadius" min="25" max="150" value="75" step="25">
+            </div>
+            <button onclick="addRandomEntities()">Add Random</button>
+            <button onclick="clearAll()">Clear All</button>
+            <button onclick="toggleAnimation()">Animation</button>
+        </div>
+        
+        <div class="canvas-container">
+            <div class="canvas-wrapper">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+        <div class="tooltip" id="tooltip"></div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Entities</div>
+                <div class="stat-value" id="totalEntities">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Cells</div>
+                <div class="stat-value" id="activeCells">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Cells Checked</div>
+                <div class="stat-value" id="cellsChecked">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Entities Found</div>
+                <div class="stat-value" id="entitiesFound">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const tooltip = document.getElementById('tooltip');
+        
+        let cellSize = 50;
+        let searchRadius = 75;
+        let entities = [];
+        let spatialGrid = new Map();
+        let mouseX = -1;
+        let mouseY = -1;
+        let animating = false;
+        let animationId = null;
+        let scale = 1;
+        
+        // Responsive canvas sizing
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            const rect = wrapper.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            
+            // Set display size
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            // Set actual size in memory
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Scale for high DPI displays
+            ctx.scale(dpr, dpr);
+            
+            // Calculate scale factor for coordinates
+            scale = rect.width / 800; // 800 was the original width
+            
+            // Update cell size and search radius based on scale
+            const baseCellSize = parseInt(document.getElementById('cellSize').value);
+            const baseSearchRadius = parseInt(document.getElementById('searchRadius').value);
+            cellSize = baseCellSize * scale;
+            searchRadius = baseSearchRadius * scale;
+            
+            // Scale entity positions
+            entities.forEach(entity => {
+                entity.updateScale(scale);
+            });
+            
+            rebuildSpatialGrid();
+            draw();
+        }
+        
+        class Entity {
+            constructor(x, y) {
+                this.baseX = x;
+                this.baseY = y;
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.radius = 5;
+                this.color = '#22c55e';
+            }
+            
+            updateScale(newScale) {
+                this.x = this.baseX * newScale;
+                this.y = this.baseY * newScale;
+                this.radius = 5 * newScale;
+            }
+            
+            update() {
+                if (!animating) return;
+                
+                const canvasRect = canvas.getBoundingClientRect();
+                const maxX = canvasRect.width;
+                const maxY = canvasRect.height;
+                
+                this.x += this.vx * scale;
+                this.y += this.vy * scale;
+                
+                // Bounce off walls
+                if (this.x - this.radius < 0 || this.x + this.radius > maxX) {
+                    this.vx = -this.vx;
+                }
+                if (this.y - this.radius < 0 || this.y + this.radius > maxY) {
+                    this.vy = -this.vy;
+                }
+                
+                // Keep in bounds
+                this.x = Math.max(this.radius, Math.min(maxX - this.radius, this.x));
+                this.y = Math.max(this.radius, Math.min(maxY - this.radius, this.y));
+                
+                // Update base coordinates
+                this.baseX = this.x / scale;
+                this.baseY = this.y / scale;
+            }
+        }
+        
+        function getCellKey(x, y) {
+            const cellX = Math.floor(x / cellSize);
+            const cellY = Math.floor(y / cellSize);
+            return `${cellX},${cellY}`;
+        }
+        
+        function rebuildSpatialGrid() {
+            spatialGrid.clear();
+            entities.forEach(entity => {
+                const key = getCellKey(entity.x, entity.y);
+                if (!spatialGrid.has(key)) {
+                    spatialGrid.set(key, []);
+                }
+                spatialGrid.get(key).push(entity);
+            });
+            updateStats();
+        }
+        
+        function findNearby(centerX, centerY, radius) {
+            const found = [];
+            const checkedCells = new Set();
+            
+            const minCellX = Math.floor((centerX - radius) / cellSize);
+            const maxCellX = Math.floor((centerX + radius) / cellSize);
+            const minCellY = Math.floor((centerY - radius) / cellSize);
+            const maxCellY = Math.floor((centerY + radius) / cellSize);
+            
+            for (let cellX = minCellX; cellX <= maxCellX; cellX++) {
+                for (let cellY = minCellY; cellY <= maxCellY; cellY++) {
+                    const key = `${cellX},${cellY}`;
+                    checkedCells.add(key);
+                    
+                    const cellEntities = spatialGrid.get(key) || [];
+                    
+                    cellEntities.forEach(entity => {
+                        const dx = entity.x - centerX;
+                        const dy = entity.y - centerY;
+                        const distSq = dx * dx + dy * dy;
+                        
+                        if (distSq <= radius * radius) {
+                            found.push(entity);
+                        }
+                    });
+                }
+            }
+            
+            return { found, checkedCells };
+        }
+        
+        function draw() {
+            const rect = canvas.getBoundingClientRect();
+            ctx.clearRect(0, 0, rect.width, rect.height);
+            
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, rect.width, rect.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            
+            for (let x = 0; x <= rect.width; x += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, rect.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= rect.height; y += cellSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Highlight active cells
+            ctx.fillStyle = 'rgba(99, 102, 241, 0.1)';
+            spatialGrid.forEach((entities, key) => {
+                if (entities.length > 0) {
+                    const [cellX, cellY] = key.split(',').map(Number);
+                    ctx.fillRect(cellX * cellSize, cellY * cellSize, cellSize, cellSize);
+                }
+            });
+            
+            // If mouse is over canvas, show search visualization
+            if (mouseX >= 0 && mouseY >= 0 && mouseX <= rect.width && mouseY <= rect.height) {
+                const result = findNearby(mouseX, mouseY, searchRadius);
+                
+                // Highlight checked cells
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
+                result.checkedCells.forEach(key => {
+                    const [cellX, cellY] = key.split(',').map(Number);
+                    ctx.fillRect(cellX * cellSize, cellY * cellSize, cellSize, cellSize);
+                });
+                
+                // Draw search radius
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, searchRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Update stats
+                document.getElementById('cellsChecked').textContent = result.checkedCells.size;
+                document.getElementById('entitiesFound').textContent = result.found.length;
+                
+                // Highlight found entities
+                result.found.forEach(entity => {
+                    ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                    ctx.beginPath();
+                    ctx.arc(entity.x, entity.y, entity.radius + 3 * scale, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+            
+            // Draw entities
+            entities.forEach(entity => {
+                ctx.fillStyle = entity.color;
+                ctx.beginPath();
+                ctx.arc(entity.x, entity.y, entity.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // Draw cell counts
+            ctx.fillStyle = '#94a3b8';
+            const fontSize = Math.max(10, 12 * scale);
+            ctx.font = `${fontSize}px monospace`;
+            spatialGrid.forEach((entities, key) => {
+                if (entities.length > 0) {
+                    const [cellX, cellY] = key.split(',').map(Number);
+                    ctx.fillText(entities.length, cellX * cellSize + 5, cellY * cellSize + 15);
+                }
+            });
+        }
+        
+        function updateStats() {
+            document.getElementById('totalEntities').textContent = entities.length;
+            document.getElementById('activeCells').textContent = spatialGrid.size;
+        }
+        
+        function animate() {
+            entities.forEach(entity => entity.update());
+            rebuildSpatialGrid();
+            draw();
+            
+            if (animating) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+        
+        function addRandomEntities() {
+            const count = window.innerWidth < 640 ? 25 : 50;
+            for (let i = 0; i < count; i++) {
+                const x = Math.random() * 800;
+                const y = Math.random() * 600;
+                entities.push(new Entity(x, y));
+            }
+            resizeCanvas();
+        }
+        
+        function clearAll() {
+            entities = [];
+            rebuildSpatialGrid();
+            draw();
+        }
+        
+        function toggleAnimation() {
+            animating = !animating;
+            if (animating) {
+                animate();
+            } else if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        }
+        
+        // Event listeners
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / scale;
+            const y = (e.clientY - rect.top) / scale;
+            entities.push(new Entity(x, y));
+            resizeCanvas();
+        });
+        
+        // Handle both mouse and touch events
+        function handlePointerMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+            
+            // Show tooltip
+            const cellX = Math.floor(mouseX / cellSize);
+            const cellY = Math.floor(mouseY / cellSize);
+            const key = `${cellX},${cellY}`;
+            const cellEntities = spatialGrid.get(key) || [];
+            
+            tooltip.style.display = 'block';
+            
+            // Position tooltip to avoid going off-screen
+            const tooltipX = e.clientX + 10;
+            const tooltipY = e.clientY - 30;
+            
+            if (tooltipX + 150 > window.innerWidth) {
+                tooltip.style.left = (e.clientX - 150) + 'px';
+            } else {
+                tooltip.style.left = tooltipX + 'px';
+            }
+            
+            if (tooltipY < 10) {
+                tooltip.style.top = (e.clientY + 10) + 'px';
+            } else {
+                tooltip.style.top = tooltipY + 'px';
+            }
+            
+            tooltip.textContent = `Cell [${cellX}, ${cellY}] - ${cellEntities.length} entities`;
+            
+            if (!animating) draw();
+        }
+        
+        canvas.addEventListener('mousemove', handlePointerMove);
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                handlePointerMove(e.touches[0]);
+            }
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            mouseX = -1;
+            mouseY = -1;
+            tooltip.style.display = 'none';
+            document.getElementById('cellsChecked').textContent = '0';
+            document.getElementById('entitiesFound').textContent = '0';
+            if (!animating) draw();
+        });
+        
+        canvas.addEventListener('touchend', () => {
+            mouseX = -1;
+            mouseY = -1;
+            tooltip.style.display = 'none';
+            document.getElementById('cellsChecked').textContent = '0';
+            document.getElementById('entitiesFound').textContent = '0';
+            if (!animating) draw();
+        });
+        
+        document.getElementById('cellSize').addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            document.getElementById('cellSizeValue').textContent = value;
+            cellSize = value * scale;
+            rebuildSpatialGrid();
+            draw();
+        });
+        
+        document.getElementById('searchRadius').addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            document.getElementById('searchRadiusValue').textContent = value;
+            searchRadius = value * scale;
+            if (!animating) draw();
+        });
+        
+        // Window resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+            }, 100);
+        });
+        
+        // Initial setup
+        resizeCanvas();
+        addRandomEntities();
+        draw();
+    </script>
+</body>
+</html>

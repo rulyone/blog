@@ -139,4 +139,8 @@ public class WebController {
         return "portfolio";
     }
     
+    @GetMapping("/spatialindex")
+    public String spatialIndex() {
+        return "spatialindex";
+    }
 }
