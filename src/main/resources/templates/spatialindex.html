@@ -597,8 +597,9 @@
                 tooltip.style.top = tooltipY + 'px';
             }
             
-            tooltip.textContent = `Cell [${cellX}, ${cellY}] - ${cellEntities.length} entities`;
-            
+            //tooltip.textContent = `Cell [${cellX}, ${cellY}] - ${cellEntities.length} entities`;
+            tooltip.textContent = `Cell [${cellX}, ${cellY}]`;
+
             if (!animating) draw();
         }
         
