@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Fragment that returns posts + next trigger -->
+    <th:block th:fragment="postList">
+        <!-- New posts -->
+        <div th:each="post : ${posts}">
+            <article class="bg-white p-6 md:p-8 mb-6 rounded-lg shadow-sm">
+                <a th:href="@{/viewpost/{id}/{slug}(id=${post.id}, slug=${post.slug})}"
+                   class="block no-underline text-inherit transition-colors duration-200 hover:text-blue-500">
+                    <h2 th:text="${post.title}"
+                        class="text-3xl md:text-4xl font-bold text-slate-800 mb-2 border-l-4 border-blue-500 pl-4 transition-all duration-200 hover:border-l-8 hover:text-blue-600 hover:pl-6">
+                        Title</h2>
+                </a>
+                <div class="text-sm text-gray-500 mb-4 local-date" th:attr="data-time=${post.createdAt}"></div>
+                <div class="leading-relaxed content prose prose-lg max-w-none" th:utext="${post.htmlContent}">Markdown rendered content</div>
+            </article>
+        </div>
+        
+        <!-- Next trigger or end message -->
+        <div th:if="${hasNext}"
+             hx-get="/posts"
+             th:hx-get="@{/posts(page=${nextPage})}"
+             hx-trigger="revealed"
+             hx-swap="outerHTML"
+             hx-indicator="#loading-indicator">
+            <!-- Loading indicator with skeleton loader matching your article style -->
+            <div id="loading-indicator" class="htmx-indicator">
+                <div class="bg-white p-6 md:p-8 mb-6 rounded-lg shadow-sm animate-pulse">
+                    <div class="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+                    <div class="space-y-2">
+                        <div class="h-4 bg-gray-200 rounded"></div>
+                        <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div th:unless="${hasNext}" class="text-center py-8 text-gray-500">
+            <p class="text-lg">You've reached the end of the posts</p>
+        </div>
+    </th:block>
+</body>
+</html>

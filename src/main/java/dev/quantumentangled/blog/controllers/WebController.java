@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +37,8 @@ public class WebController {
     private final BlogCommentRepository commentRepository;
     private final MarkdownService markdownService;
 
+    private final int DEFAULT_PAGE_SIZE = 1;
+
     private final RequestCache requestCache = new HttpSessionRequestCache();
 
     public WebController(BlogPostRepository postRepository, BlogCommentRepository commentRepository, MarkdownService markdownService) {
@@ -47,7 +51,9 @@ public class WebController {
     public String blogPage(HttpServletRequest request, HttpServletResponse response, 
                             Authentication authentication, Model model) {
 
-        List<BlogPost> posts = postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+        PageRequest pageRequest = PageRequest.of(0, DEFAULT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<BlogPost> posts = postRepository.findAll(pageRequest);
 
         // Convert Markdown to HTML for each post
         List<Map<String, Object>> renderedPosts = posts.stream().map(post -> {
@@ -61,11 +67,44 @@ public class WebController {
         }).toList();
 
         model.addAttribute("posts", renderedPosts);
+        model.addAttribute("hasNext", posts.hasNext());
+        model.addAttribute("nextPage", 1);
 
         if (authentication == null) {
             requestCache.saveRequest(request, response);
         }
         return "blog";
+    }
+
+    @GetMapping("/posts")
+    public String loadMorePosts(@RequestParam(defaultValue = "1") int page,
+                               Model model,
+                               HttpServletResponse response) {
+
+        PageRequest pageRequest = PageRequest.of(page, DEFAULT_PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<BlogPost> postPage = postRepository.findAll(pageRequest);
+
+        if (postPage.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            return null;
+        }
+
+        // Convert markdown for this page
+        List<Map<String, Object>> renderedPosts = postPage.getContent().stream().map(post -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", post.getId());
+            map.put("slug", post.getSlug());
+            map.put("title", post.getTitle());
+            map.put("htmlContent", markdownService.renderToHtml(post.getContent()));
+            map.put("createdAt", post.getCreatedAt());
+            return map;
+        }).toList();
+
+        model.addAttribute("posts", renderedPosts);
+        model.addAttribute("hasNext", postPage.hasNext());
+        model.addAttribute("nextPage", page + 1);
+
+        return "fragments/posts :: postList";
     }
 
     @GetMapping("/viewpost/{id}/{slug}")
