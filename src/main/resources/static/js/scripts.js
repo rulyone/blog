@@ -17,3 +17,25 @@ document.body.addEventListener('htmx:afterRequest', function (evt) {
     form.reset();
   }
 });
+
+document.addEventListener('htmx:afterSettle', function(evt) {
+    if (evt.detail.pathInfo?.requestPath?.includes('/posts')) {
+        // Find all code blocks that haven't been processed by Prism yet
+        const unprocessedCode = document.querySelectorAll('pre code:not(.token):not([data-prism-processed])');
+
+        unprocessedCode.forEach(block => {
+            // Mark as processed to avoid re-processing
+            block.setAttribute('data-prism-processed', 'true');
+
+            // Ensure it has a language class if missing
+            if (!block.className.match(/language-\w+/)) {
+                block.classList.add('language-plaintext');
+            }
+
+            // Highlight this specific block
+            if (typeof Prism !== 'undefined') {
+                Prism.highlightElement(block);
+            }
+        });
+    }
+});
