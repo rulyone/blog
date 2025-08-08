@@ -101,6 +101,13 @@
             
             return message;
         }
+
+        if (!window.WebGLRenderingContext || 
+            !(document.createElement('canvas').getContext('webgl') || 
+            document.createElement('canvas').getContext('experimental-webgl'))) {
+            document.body.appendChild(getWebGLErrorMessage());
+            throw new Error('WebGL not available');
+        }
         
         // Setup Three.js
         const scene = new THREE.Scene();
