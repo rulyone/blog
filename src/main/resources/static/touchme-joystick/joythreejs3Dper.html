@@ -46,6 +46,8 @@
 </head>
 <body>
     <h2>TouchMeJoystick with Orbital Controls support</h2>
+    <p>Note: virtual buttons and joystick only work on Touch devices (Mobile phones, Tablets, etc), <strong>not</strong> on mouse clicks.</p>
+    <p>You can connect your physical joystick and it should also work.</p>
     <pre id="output">Loading...</pre>
     <div id="threejs-container" style="position: relative;"></div>
 
@@ -57,6 +59,48 @@
         
         const output = document.getElementById('output');
         const container = document.getElementById('threejs-container');
+
+        function getWebGLErrorMessage() {
+            const message = document.createElement('div');
+            message.style.cssText = `
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                font-weight: normal;
+                text-align: center;
+                background: #fff;
+                color: #000;
+                padding: 1.5em;
+                width: 400px;
+                margin: 5em auto;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            `;
+
+            if (!window.WebGLRenderingContext) {
+                message.innerHTML = `
+                    <h2>WebGL Not Supported</h2>
+                    <p>Your browser does not support WebGL.</p>
+                    <p>(If using Mac/iOS, check if Lockdown Mode is enabled for this site.)</p>
+                    <p>Find out how to get it at 
+                    <a href="https://get.webgl.org/" style="color: #000">get.webgl.org</a></p>
+                `;
+            } else {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) {
+                    message.innerHTML = `
+                        <h2>WebGL Not Enabled</h2>
+                        <p>Your browser supports WebGL but it is disabled or unavailable.</p>
+                        <p>(If using Mac/iOS, check if Lockdown Mode is enabled for this site.)</p>
+                        <p>Find out how to enable it at 
+                        <a href="https://get.webgl.org/troubleshooting/" style="color: #000">
+                        get.webgl.org/troubleshooting</a></p>
+                    `;
+                }
+            }
+            
+            return message;
+        }
         
         // Setup Three.js
         const scene = new THREE.Scene();
